@@ -3,6 +3,8 @@ import pandas as pd
 import numpy as np
 
 URL_BASE = 'https://dadosabertos.camara.leg.br/api/v2/'
+DATA_INICIO = '2014-01-01'
+DATA_FIM = '2018-12-31'
 
 
 def get_deputado(id):
@@ -12,23 +14,23 @@ def get_deputado(id):
 
 
 def get_deputados():
-    url_get_deputados = URL_BASE + 'deputados' 
+    url_get_deputados = URL_BASE + 'deputados'
     params = 'itens=1&ordem=ASC&ordenarPor=nome'
     response = requests.get(url = url_get_deputados, params = params)
     return response.json()
 
 
-def get_despesas_deputado(id_deputado):
-    url_get = URL_BASE + 'deputados/{}/despesas'.format(id_deputado) 
-    params = 'itens=100'
+def get_proposicoes_deputado(id_deputado):
+    url_get = URL_BASE + 'proposicoes' 
+    params = 'idAutor={}&itens=100&dataInicio={}&dataFim={}'.format(id_deputado, DATA_INICIO, DATA_FIM)
     response = requests.get(url = url_get, params = params)
     return response.json()
 
 
 def get_deputados_with_despesas(deputados):
     for deputado in deputados:
-        despesas_deputado = get_despesas_deputado(deputado['id'])
-        deputado['despesas'] = despesas_deputado['dados']
+        preposicoes_deputado = get_proposicoes_deputado(deputado['id'])
+        deputado['preposicoes'] = preposicoes_deputado['dados'] 
 
         print(deputado)
     
